@@ -3,6 +3,7 @@ package function
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -70,12 +71,25 @@ func processCommand(w http.ResponseWriter, r *http.Request, command, text string
 			elkHost := os.Getenv("elk_host")
 			logs, err := cmd.QueryLogs(text, elkHost)
 			if err != nil {
+				log.Printf("QueryLogs error: %s", err.Error())
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return true
 			}
 
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte(logs))
+			return true
+
+		case "/workflow":
+			res, err := cmd.GetWorkflow(text)
+			if err != nil {
+				log.Printf("GetWorkflow error: %s", err.Error())
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return true
+			}
+
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(res))
 			return true
 		}
 	}

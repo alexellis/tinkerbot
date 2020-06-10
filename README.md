@@ -172,10 +172,21 @@ Now edit stack.yml and update the environment variable for where your ELK cluste
 
 ```yaml
     environment:
-      elk_host: http://192.168.0.61:9200/
+      elk_host: http://192.168.1.1:9200/
 ```
 
 Here, I am using an IP on my local network. By default Tinkerbell exposes ElasticSearch on all interfaces on your provisioner. Check the interfaces with `ip addr` or `ifconfig`.
+
+If you are using the `workflow` command, you'll also need to add the following entries (changing the IP as per the step above):
+
+```yaml
+    environment:
+      TINKERBELL_GRPC_AUTHORITY: 192.168.1.1:42113
+      TINKERBELL_CERT_URL: http://192.168.1.1:42114/cert
+      ALLOW_INSECURE: true
+```
+
+> Note: TINKERBELL_GRPC_AUTHORITY does not include a URL scheme
 
 ### Deploy the bot
 

@@ -6,17 +6,21 @@ functions:
   tinkerbot:
     lang: golang-middleware
     handler: ./tinkerbot
-    image: alexellis2/tinkerbot:latest
+    image: alexellis2/tinkerbot:0.1.1
     labels:
       com.openfaas.scale.zero: "false"
     secrets:
       - validation-token
+    build_args:
+      GO111MODULE: on
     environment:
       write_debug: true
       verify: true
-      elk_host: http://192.168.0.61:9200/
-    build_args:
-      GO111MODULE: on
+      elk_host: http://192.168.1.1:9200/
+      TINKERBELL_GRPC_AUTHORITY: 192.168.1.1:42113
+      TINKERBELL_CERT_URL: http://192.168.1.1:42114/cert
+      ALLOW_INSECURE: true
+      write_timeout: 2s
 
 configuration:
   templates:
