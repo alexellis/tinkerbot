@@ -30,8 +30,6 @@ func GetWorkflow(text string) (string, error) {
 		return "", err
 	}
 
-	log.Println(res)
-
 	var wf *workflow.Workflow
 
 	out := "Workflows:\n"
