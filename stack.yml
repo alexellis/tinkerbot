@@ -10,11 +10,10 @@ functions:
     labels:
       com.openfaas.scale.zero: "false"
     secrets:
-      - slack-token
-      - payload-secret
+      - validation-token
     environment:
       write_debug: true
-      verify: false
+      verify: true
       elk_host: http://192.168.0.61:9200/
     build_args:
       GO111MODULE: on

@@ -32,13 +32,14 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if val, ok := os.LookupEnv("validate"); ok && val == "true" {
-		token, err := sdk.ReadSecret("token")
+		token, err := sdk.ReadSecret("validation-token")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if token != query.Get("token") {
-			http.Error(w, fmt.Sprintf("Token: %s, invalid", query.Get("token")), http.StatusUnauthorized)
+		tokenSent := query.Get("token")
+		if token != tokenSent {
+			http.Error(w, fmt.Sprintf("Token: %s, invalid", tokenSent), http.StatusUnauthorized)
 			return
 		}
 	}

@@ -78,6 +78,8 @@ Do not follow the instructions printed.
 
 ### Expose your OpenFaaS gateway on the provisioner
 
+> If you are running on-premises, or at home, then use `inletsctl create` to create a public host on Packet or DigitalOcean to act as your exit-server instead.
+
 Since we are running k3d within a container, it will not be accessible by Slack for incoming webhooks required for the bot. We will run the [inlets](https://inlets.dev) server process on the provisioner and connect from a pod inside k3s to forward all traffic to the outside world.
 
 ```bash
@@ -154,19 +156,16 @@ Once you have created the command, you can install it to a workspace:
 
 ### Configure the bot
 
-You will create two secrets:
+You will create the following secrets:
 
-* `basic-auth-password` - for your gateway admin user
-* `slack-token` - Slack token for verification
+* `validation-token` - Slack token for verification - navigate to Basic Information -> App Credentials and copy the text from `Verification Token`
 
 Run the following:
 
 ```sh
-export SLACK_TOKEN="test"
-export PAYLOAD_SECRET="test"
+export VALIDATION_TOKEN="w7ub1M8Jk2mYHEtpmtgXiLzr"
 
-faas-cli secret create slack-token --from-literal $SLACK_TOKEN
-faas-cli secret create payload-secret --from-literal $PAYLOAD_SECRET
+faas-cli secret create validation-token --from-literal $VALIDATION_TOKEN
 ```
 
 Now edit stack.yml and update the environment variable for where your ELK cluster is located. This is probably the public IP of your provisioner.
@@ -195,3 +194,8 @@ Logs from Nginx:
 Logs from the worker:
 
 ![](./docs/worker-logs.png)
+
+
+## Getting help
+
+Feel free to join the [Packet community Slack](https://slack.packet.com) and start a discussion in the `#tinkerbell` channel.
