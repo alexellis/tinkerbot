@@ -38,7 +38,7 @@ Get a list of workflows
 Get the events for the latest updated workflow.
 
 ```
-/events <WORKFLOW_ID>
+/events
 ```
 
 > This command is ideal for debugging or for monitoring an in-flight workflow.

@@ -6,7 +6,7 @@ functions:
   tinkerbot:
     lang: golang-middleware
     handler: ./tinkerbot
-    image: alexellis2/tinkerbot:0.1.1
+    image: alexellis2/tinkerbot:0.1.2
     labels:
       com.openfaas.scale.zero: "false"
     secrets:
