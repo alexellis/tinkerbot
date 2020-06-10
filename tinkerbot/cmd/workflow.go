@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/tinkerbell/tink/protos/workflow"
@@ -32,7 +33,7 @@ func GetWorkflow(text string) (string, error) {
 	}
 
 	var wf *workflow.Workflow
-	var wfs []*workflow.Workflow
+	var wfs Workflows
 
 	out := "Workflows:\n"
 	for wf, err = res.Recv(); err == nil && wf.Template != ""; wf, err = res.Recv() {
@@ -40,17 +41,28 @@ func GetWorkflow(text string) (string, error) {
 	}
 
 	if len(wfs) > 0 {
-		sort.Sort(byUpdated(wfs))
+		sort.Sort(byUpdated{wfs})
 	}
 
 	log.Println(wfs)
 	for _, w := range wfs {
-		out = out + "\t" + w.GetUpdatedAt().String() + " - " + w.Id + "\n"
+		updated := time.Unix(w.GetUpdatedAt().Seconds, 0)
+		out = out + "\t" + updated.String() + "\t" + w.Id + "\n"
 	}
 
 	log.Println(err)
 
 	return out, nil
+}
+
+type Workflows []*workflow.Workflow
+type byUpdated struct{ Workflows }
+
+func (s Workflows) Len() int      { return len(s) }
+func (s Workflows) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
+func (s byUpdated) Less(i, j int) bool {
+	return s.Workflows[i].GetUpdatedAt().Nanos > s.Workflows[j].GetUpdatedAt().Nanos
 }
 
 // GetConnection returns a gRPC client connection
@@ -89,11 +101,4 @@ func getConnection() (*grpc.ClientConn, error) {
 	}
 
 	return conn, nil
-}
-
-type Workflows []*workflow.Workflow
-type byUpdated struct{ Workflows }
-
-func (s byUpdated) Less(i, j int) bool {
-	return s.Workflows[i].GetUpdatedAt().Nanos < s.Workflows[j].GetUpdatedAt().Nanos
 }
