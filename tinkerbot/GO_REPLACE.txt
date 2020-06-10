@@ -1,0 +1,2 @@
+require github.com/elastic/go-elasticsearch/v8 master
+replace github.com/alexellis/tinkerbot/tinkerbot/cmd => ./function/cmd

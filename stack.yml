@@ -1,0 +1,24 @@
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+
+functions:
+  tinkerbot:
+    lang: golang-middleware
+    handler: ./tinkerbot
+    image: alexellis2/tinkerbot:latest
+    labels:
+      com.openfaas.scale.zero: "false"
+    secrets:
+      - slack-token
+      - payload-secret
+    environment:
+      write_debug: true
+      verify: false
+      elk_host: http://192.168.0.61:9200/
+    build_args:
+      GO111MODULE: on
+
+configuration:
+  templates:
+    - name: golang-middleware
