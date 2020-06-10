@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 
 	"github.com/pkg/errors"
 	"github.com/tinkerbell/tink/protos/workflow"
@@ -31,11 +32,20 @@ func GetWorkflow(text string) (string, error) {
 	}
 
 	var wf *workflow.Workflow
+	var wfs []*workflow.Workflow
 
 	out := "Workflows:\n"
 	for wf, err = res.Recv(); err == nil && wf.Template != ""; wf, err = res.Recv() {
-		log.Println(wf)
-		out = out + wf.Id + "\n"
+		wfs = append(wfs, wf)
+	}
+
+	if len(wfs) > 0 {
+		sort.Sort(byUpdated(wfs))
+	}
+
+	log.Println(wfs)
+	for _, w := range wfs {
+		out = out + "\t" + w.GetUpdatedAt().String() + " - " + w.Id + "\n"
 	}
 
 	log.Println(err)
@@ -79,4 +89,11 @@ func getConnection() (*grpc.ClientConn, error) {
 	}
 
 	return conn, nil
+}
+
+type Workflows []*workflow.Workflow
+type byUpdated struct{ Workflows }
+
+func (s byUpdated) Less(i, j int) bool {
+	return s.Workflows[i].GetUpdatedAt().Nanos < s.Workflows[j].GetUpdatedAt().Nanos
 }
