@@ -3,8 +3,8 @@ package cmd
 import (
 	"context"
 	"crypto/x509"
+	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"sort"
@@ -44,13 +44,14 @@ func GetWorkflow(text string) (string, error) {
 		sort.Sort(byUpdated{wfs})
 	}
 
-	log.Println(wfs)
 	for _, w := range wfs {
 		updated := time.Unix(w.GetUpdatedAt().Seconds, 0)
 		out = out + "\t" + updated.String() + "\t" + w.Id + "\n"
 	}
 
-	log.Println(err)
+	if err != nil && err != io.EOF {
+		return "", err
+	}
 
 	return out, nil
 }
@@ -62,7 +63,10 @@ func (s Workflows) Len() int      { return len(s) }
 func (s Workflows) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 func (s byUpdated) Less(i, j int) bool {
-	return s.Workflows[i].GetUpdatedAt().Nanos > s.Workflows[j].GetUpdatedAt().Nanos
+	u1 := time.Unix(s.Workflows[i].GetUpdatedAt().Seconds, 0)
+	u2 := time.Unix(s.Workflows[j].GetUpdatedAt().Seconds, 0)
+
+	return u2.After(u1)
 }
 
 // GetConnection returns a gRPC client connection

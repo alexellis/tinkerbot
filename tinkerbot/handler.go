@@ -91,6 +91,17 @@ func processCommand(w http.ResponseWriter, r *http.Request, command, text string
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte(res))
 			return true
+		case "/events":
+			res, err := cmd.GetEvents(text)
+			if err != nil {
+				log.Printf("GetEvents error: %s", err.Error())
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return true
+			}
+
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(res))
+			return true
 		}
 	}
 	return false

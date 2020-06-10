@@ -27,12 +27,26 @@ Examples include:
 
 ### Workflows
 
-Get the events for the last updated workflow.
-
-This command is ideal when you are trying out a workflow or debugging it to see how far it has got.
+Get a list of workflows
 
 ```
-/last-workflow
+/workflow
+```
+
+### Events
+
+Get the events for the latest updated workflow.
+
+```
+/events <WORKFLOW_ID>
+```
+
+> This command is ideal for debugging or for monitoring an in-flight workflow.
+
+Get the events for a given workflow
+
+```
+/events <WORKFLOW_ID>
 ```
 
 ## Installation
@@ -200,12 +214,15 @@ If you wish to hack on the bot and deploy a new version, replace `alexellis2` in
 
 Logs from Nginx:
 
-![](./docs/nginx-logs.png)
+![Nginx logs](./docs/nginx-logs.png)
 
 Logs from the worker:
 
-![](./docs/worker-logs.png)
+![Worker logs](./docs/worker-logs.png)
 
+Showing the events for the latest updated workflow:
+
+![Events](./docs/events.png)
 
 ## Getting help
 
