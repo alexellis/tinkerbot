@@ -19,8 +19,8 @@ functions:
       elk_host: http://192.168.1.1:9200/
       TINKERBELL_GRPC_AUTHORITY: 192.168.1.1:42113
       TINKERBELL_CERT_URL: http://192.168.1.1:42114/cert
-      ALLOW_INSECURE: true
       write_timeout: 2s
+      read_timeout: 2s
 
 configuration:
   templates:

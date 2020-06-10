@@ -197,7 +197,6 @@ If you are using the `workflow` command, you'll also need to add the following e
     environment:
       TINKERBELL_GRPC_AUTHORITY: 192.168.1.1:42113
       TINKERBELL_CERT_URL: http://192.168.1.1:42114/cert
-      ALLOW_INSECURE: true
 ```
 
 > Note: TINKERBELL_GRPC_AUTHORITY does not include a URL scheme
