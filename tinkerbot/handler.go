@@ -22,6 +22,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		input = body
 	}
 
+	// a query-string is sent in the body of the request
 	var query *url.Values
 	if len(input) > 0 {
 		q, err := url.ParseQuery(string(input))
@@ -32,6 +33,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		query = &q
 	}
 
+	// validate that the request has the expected token from Slack
 	if val, ok := os.LookupEnv("validate"); ok && val == "true" {
 		token, err := sdk.ReadSecret("validation-token")
 		if err != nil {
@@ -91,6 +93,7 @@ func processCommand(w http.ResponseWriter, r *http.Request, command, text string
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte(res))
 			return true
+
 		case "/events":
 			res, err := cmd.GetEvents(text)
 			if err != nil {

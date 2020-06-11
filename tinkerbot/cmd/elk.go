@@ -24,14 +24,16 @@ type ElkSearchResponse struct {
 	}
 }
 
+// QueryLogs uses the ELK search API to fetch a recent
+// number of logs for the index sent via indexName.
+// Valid indicies are listed in the Kibana UI such as
+// nginx, worker, tink-server
 func QueryLogs(indexName, elkHost string) (string, error) {
 	cfg := elasticsearch.Config{
 		Addresses: []string{elkHost},
 	}
 
 	es, _ := elasticsearch.NewClient(cfg)
-	log.Println(elasticsearch.Version)
-	log.Println(es.Info())
 
 	res, err := es.Search(es.Search.WithIndex(indexName))
 

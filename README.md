@@ -26,6 +26,7 @@ Examples include:
 
 ```
 /logs worker
+/logs tink-server
 /logs boots
 /logs nginx
 /logs registry

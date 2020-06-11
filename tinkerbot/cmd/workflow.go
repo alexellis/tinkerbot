@@ -2,20 +2,15 @@ package cmd
 
 import (
 	"context"
-	"crypto/x509"
 	"io"
-	"io/ioutil"
-	"net/http"
-	"os"
 	"sort"
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/tinkerbell/tink/protos/workflow"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 )
 
+// GetWorkflow looks up a list of workflows from Tinkerbell's
+// gRPC API
 func GetWorkflow(text string) (string, error) {
 
 	conn, err := getConnection()
@@ -62,47 +57,10 @@ type byUpdated struct{ Workflows }
 func (s Workflows) Len() int      { return len(s) }
 func (s Workflows) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
+// Less sorts with the latest updated coming last in the list
 func (s byUpdated) Less(i, j int) bool {
 	u1 := time.Unix(s.Workflows[i].GetUpdatedAt().Seconds, 0)
 	u2 := time.Unix(s.Workflows[j].GetUpdatedAt().Seconds, 0)
 
 	return u2.After(u1)
-}
-
-// GetConnection returns a gRPC client connection
-func getConnection() (*grpc.ClientConn, error) {
-	certURL := os.Getenv("TINKERBELL_CERT_URL")
-	if certURL == "" {
-		return nil, errors.New("undefined TINKERBELL_CERT_URL")
-	}
-
-	resp, err := http.Get(certURL)
-	if err != nil {
-		return nil, errors.Wrap(err, "fetch cert")
-	}
-	defer resp.Body.Close()
-
-	certs, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "read cert")
-	}
-
-	cp := x509.NewCertPool()
-	ok := cp.AppendCertsFromPEM(certs)
-	if !ok {
-		return nil, errors.Wrap(err, "parse cert")
-	}
-
-	grpcAuthority := os.Getenv("TINKERBELL_GRPC_AUTHORITY")
-	if grpcAuthority == "" {
-		return nil, errors.New("undefined TINKERBELL_GRPC_AUTHORITY")
-	}
-
-	creds := credentials.NewClientTLSFromCert(cp, "")
-	conn, err := grpc.Dial(grpcAuthority, grpc.WithTransportCredentials(creds))
-	if err != nil {
-		return nil, errors.Wrap(err, "connect to tinkerbell server")
-	}
-
-	return conn, nil
 }

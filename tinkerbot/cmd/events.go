@@ -4,13 +4,16 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"sort"
 	"time"
 
 	"github.com/tinkerbell/tink/protos/workflow"
 )
 
+// GetEvents looks up a list of workflows from Tinkerbell's
+// gRPC API for a given workflow's ID read from "text". If
+// no workflow ID is given, then the latest updated workflow
+// will be used instead
 func GetEvents(text string) (string, error) {
 	conn, err := getConnection()
 	if err != nil {
@@ -35,7 +38,7 @@ func GetEvents(text string) (string, error) {
 	events, err := workflowClient.ShowWorkflowEvents(ctx, &req)
 
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	var wfEvents []*workflow.WorkflowActionStatus
@@ -44,7 +47,6 @@ func GetEvents(text string) (string, error) {
 		wfEvents = append(wfEvents, event)
 	}
 
-	// {event.WorkerId, event.TaskName, event.ActionName, event.Seconds, event.Message, event.ActionStatus},
 	if err != nil && err != io.EOF {
 		return "", err
 	}
