@@ -1,10 +1,16 @@
 # tinkerbot
 
-A Slackbot for Tinkerbell
+ChatOps for Tinkerbell
 
-tinkerbot uses the both the gRPC API of Tinkerbell, and the HTTP REST API of ELK for querying logs.
+tinkerbot is a Slackbot which brings ChatOps to Packet's Tinkerbell project for bare-metal automation.
 
-This bot uses the `golang-middleware` template and is written to be deployed to OpenFaaS.
+## How does it work?
+
+tinkerbot makes use of both the gRPC API of Tinkerbell, and the HTTP REST API of ELK where Tinkerbell stores all its logs.
+
+The bot is written in Go using the [OpenFaaS](https://www.openfaas.com/) `golang-middleware` template and is packaged as a Docker container. 
+
+In this README you'll find instructions for configuring and deploying tinkerbot to your Tinkerbell provisioner using OpenFaaS on k3s, however you may also be able to run tinkerbot with the lighter-weight [faasd](https://github.com/openfaas/faasd) project which does not require Kubernetes.
 
 ## Commands:
 
@@ -55,7 +61,7 @@ Get the events for a given workflow
 
 * You will need your own Slack workspace, or administrative access to create and install a Slack app
 * OpenFaaS installed with reachability to your ElasticSearch server, i.e. on the provisioner
-* A public IP for Slack to send webhooks for the Slash commands, or use inlets for this
+* A public IP for Slack to send webhooks for the Slash commands, or use [inlets](https://inlets.dev/) for this
 
 ### Setup OpenFaaS and Kubernetes on your provisioner
 
@@ -92,7 +98,7 @@ Do not follow the instructions printed.
 
 ### Expose your OpenFaaS gateway on the provisioner
 
-> If you are running on-premises, or at home, then use `inletsctl create` to create a public host on Packet or DigitalOcean to act as your exit-server instead.
+> If you are running on-premises, or at home, then use the [inlets-operator for Kubernetes instead](https://github.com/inlets/inlets-operator/).
 
 Since we are running k3d within a container, it will not be accessible by Slack for incoming webhooks required for the bot. We will run the [inlets](https://inlets.dev) server process on the provisioner and connect from a pod inside k3s to forward all traffic to the outside world.
 
@@ -207,7 +213,7 @@ If you are using the `workflow` command, you'll also need to add the following e
 faas-cli deploy -f stack.yml
 ```
 
-If you wish to hack on the bot and deploy a new version, replace `alexellis2` in the `image:` field with your own Docker Hub account, and then run `faas-cli up` instead of `faas-cli deploy`.
+You can view the bot's logs with `faas-cli logs tinkerbot`.
 
 ### Try out the bot
 
@@ -223,6 +229,28 @@ Showing the events for the latest updated workflow:
 
 ![Events](./docs/events.png)
 
+## Taking it further
+
+* Enable HTTPS for OpenFaaS
+
+  You can enable HTTPS for OpenFaaS [using this guide for inlets PRO](https://docs.inlets.dev/#/get-started/quickstart-ingresscontroller-cert-manager?id=expose-your-ingresscontroller-and-get-tls-from-letsencrypt) or if you installed Kubernetes directly on the provisioner, [you can try this guide](https://blog.alexellis.io/tls-the-easy-way-with-openfaas-and-k3sup/).
+
+* Do you want to hack on the functions?
+
+  If you wish to hack on the bot and deploy a new version, replace `alexellis2` in the `image:` field with your own Docker Hub account, and then run `faas-cli up` instead of `faas-cli deploy`.
+
+  If you want to work on the code, you can run `faas-cli build/up`, or for quicker iterations just run `go test ./tinkerbot/cmd/` or `go build` within the `./tinkerbot/cmd/` folder.
+
+* What if I don't want to run Kubernetes?
+
+  You can try [faasd](https://github.com/openfaas/faasd) which only requires containerd, which should already be installed on your provisioner.
+
+* Why do I need to run OpenFaaS on the provisioner?
+
+  You need to run OpenFaaS on the provisioner, or on another host within the same private network so that it can access the gRPC API and ELK.
+
 ## Getting help
 
 Feel free to join the [Packet community Slack](https://slack.packet.com) and start a discussion in the `#tinkerbell` channel.
+
+If you'd like specific help about OpenFaaS, join [the OpenFaaS community on Slack](https://slack.openfaas.io/)
