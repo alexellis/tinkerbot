@@ -254,8 +254,12 @@ Showing the events for the latest updated workflow:
 
   You need to run OpenFaaS on the provisioner, or on another host within the same private network so that it can access the gRPC API and ELK.
 
-## Getting help
+## Getting help and contributing
 
 Feel free to join the [Packet community Slack](https://slack.packet.com) and start a discussion in the `#tinkerbell` channel.
 
 If you'd like specific help about OpenFaaS, join [the OpenFaaS community on Slack](https://slack.openfaas.io/)
+
+License: MIT
+
+This project follows the [Developer Certificate of Origin](https://developercertificate.org), all PRs must include a Signed-off-by: line using `git commit -s`.

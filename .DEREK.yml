@@ -1,0 +1,21 @@
+curators:
+ - alexellis
+
+features:
+ - dco_check
+ - comments
+ - pr_description_required
+ - release_notes
+# - hacktoberfest # Enable each October
+
+contributing_url: https://github.com/openfaas/faas/blob/master/CONTRIBUTING.md
+
+custom_messages:
+  - name: slack
+    value: |
+           --
+           Join Slack to connect with the OpenFaaS community
+           https://slack.openfaas.io/
+
+           For the Packet / Tinkerbell community see:
+           https://slack.packet.com/
