@@ -183,7 +183,7 @@ You will create the following secrets:
 
 Run the following:
 
-```sh
+```bash
 export VALIDATION_TOKEN="w7ub1M8Jk2mYHEtpmtgXiLzr"
 
 faas-cli secret create validation-token --from-literal $VALIDATION_TOKEN
@@ -225,6 +225,10 @@ Logs from Nginx:
 Logs from the worker:
 
 ![Worker logs](./docs/worker-logs.png)
+
+Showing the list of workflows:
+
+![Workflows](./docs/workflows.png)
 
 Showing the events for the latest updated workflow:
 
